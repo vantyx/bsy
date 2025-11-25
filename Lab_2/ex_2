@@ -1,0 +1,2 @@
+strings = ["apple", "cat", "banana", "hi", "python"]
+print(len(min(strings, key=len)))
