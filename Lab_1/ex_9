@@ -1,0 +1,10 @@
+data = {1, "string", 5.5, 'a'}
+print(data)
+data.add(5)
+print(data)
+data.pop()
+print(data)
+x = int(input("Введите номер элемента: "))
+for i, j in enumerate(data):
+    if i == x - 1:
+        print(j)
