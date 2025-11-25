@@ -1,0 +1,6 @@
+elements = [1, "apple", 5, 5, 8, 9 , 'f', "apple", 3, 's', 's', "word"]
+result = []
+for i in elements:
+    if elements.count(i) == 1:
+        result.append(i)
+print(result)
