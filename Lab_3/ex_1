@@ -1,0 +1,39 @@
+class Student:
+    students_quantity = 0
+
+    def __init__(self, name, course, grades):
+        self.name = name
+        self.course = course
+        self.grades = grades
+        Student.students_quantity += 1
+
+    def is_honors_student(self):
+        all_scores = [score for subject_scores in self.grades.values() for score in subject_scores]
+        if not all_scores:
+            return False
+        return sum(all_scores) / len(all_scores) > 8.5
+
+    def avg_score_by_subject(self, subject):
+        if subject not in self.grades:
+            return f"Предмет '{subject}' не найден"
+
+        scores = self.grades[subject]
+        return sum(scores) / len(scores) if scores else 0
+
+    def __str__(self):
+        return f"Студент {self.name}, курс {self.course}"
+
+
+if __name__ == "__main__":
+    student1 = Student("Anna", 2, {"programming": [9, 8, 10, 8, 10], "FE": [9, 8, 10, 9, 8]})
+    student2 = Student("Ivan", 1, {"programming": [6, 7, 5, 8, 6], "math": [7, 6, 8, 5, 7]})
+
+    print(student1)
+    print(f"Отличник: {student1.is_honors_student()}")  # True
+    print(f"Средний балл по программированию: {student1.avg_score_by_subject('programming'):.1f}")  # 9.0
+
+    print(f"\n{student2}")
+    print(f"Отличник: {student2.is_honors_student()}")  # False
+    print(f"Средний балл по математике: {student2.avg_score_by_subject('math'):.1f}")  # 6.6
+
+    print(f"\nВсего студентов: {Student.students_quantity}")
