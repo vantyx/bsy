@@ -1,0 +1,234 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.cm as cm
+
+plt.style.use('seaborn-v0_8-darkgrid')
+
+# Функция 1: Zz = 13*tg²a - 54*tga + 98
+def function1(alpha):
+    tan_alpha = np.tan(alpha)
+    return 13 * tan_alpha**2 - 54 * tan_alpha + 98
+
+# Функция 2: z₁ = (sin3α + sin7α - sin24α)/(cosα + 1 - 2sin²2α)
+def function2(alpha):
+    numerator = np.sin(3*alpha) + np.sin(7*alpha) - np.sin(24*alpha)
+    denominator = np.cos(alpha) + 1 - 2 * np.sin(2*alpha)**2
+    return numerator / denominator
+
+def safe_function1(alpha):
+    # Исключаем точки, где cos(alpha) близок к 0
+    mask = np.abs(np.cos(alpha)) > 0.01
+    result = np.full_like(alpha, np.nan)
+    result[mask] = function1(alpha[mask])
+    return result
+
+def safe_function2(alpha):
+    # Исключаем точки, где знаменатель близок к 0
+    denominator = np.cos(alpha) + 1 - 2 * np.sin(2*alpha)**2
+    mask = np.abs(denominator) > 0.01
+    result = np.full_like(alpha, np.nan)
+    result[mask] = function2(alpha[mask])
+    return result
+
+
+def task1():
+    alpha = np.linspace(-1.4, 1.4, 1000)
+
+    fig, ax1 = plt.subplots(figsize=(12, 8))
+
+    color1 = 'tab:blue'
+    ax1.set_xlabel('α (радианы)', fontsize=12)
+    ax1.set_ylabel('Zz = 13tg²α - 54tgα + 98', color=color1, fontsize=12)
+    line1 = ax1.plot(alpha, safe_function1(alpha), color=color1, linewidth=2,
+                     label='Zz = 13tg²α - 54tgα + 98')
+    ax1.tick_params(axis='y', labelcolor=color1)
+    ax1.set_ylim(-100, 300)
+
+    ax2 = ax1.twinx()
+    color2 = 'tab:red'
+    ax2.set_ylabel('z₁ = (sin3α + sin7α - sin24α)/(cosα + 1 - 2sin²2α)',
+                   color=color2, fontsize=12)
+    line2 = ax2.plot(alpha, safe_function2(alpha), color=color2, linewidth=2,
+                     label='z₁ = (sin3α + sin7α - sin24α)/(cosα + 1 - 2sin²2α)',
+                     linestyle='--')
+    ax2.tick_params(axis='y', labelcolor=color2)
+
+    ax1.annotate('Локальный минимум', xy=(-0.5, 50), xytext=(-1.0, 150),
+                 arrowprops=dict(arrowstyle='->', color='black'),
+                 fontsize=10)
+    ax2.annotate('Резкий скачок', xy=(0.8, -2), xytext=(1.0, -5),
+                 arrowprops=dict(arrowstyle='->', color='red'),
+                 fontsize=10, color='red')
+
+    plt.title('Графики функций из лабораторной работы №1\nс использованием разных осей Y',
+              fontsize=14, pad=20)
+
+    lines = line1 + line2
+    labels = [l.get_label() for l in lines]
+    ax1.legend(lines, labels, loc='upper left')
+
+    plt.tight_layout()
+    plt.savefig('task1_double_axis.png', dpi=300, bbox_inches='tight')
+    plt.savefig('task1_double_axis.pdf', bbox_inches='tight')
+    plt.show()
+
+
+def task2():
+    np.random.seed(42)
+
+    # Генерируем три кластера
+    x1 = np.random.normal(2, 0.5, 50)
+    y1 = np.random.normal(2, 0.5, 50)
+
+    x2 = np.random.normal(5, 0.7, 50)
+    y2 = np.random.normal(5, 0.7, 50)
+
+    x3 = np.random.normal(8, 0.4, 50)
+    y3 = np.random.normal(3, 0.6, 50)
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    scatter1 = ax.scatter(x1, y1, c='red', alpha=0.7, s=60, label='Кластер 1', edgecolors='black', linewidth=0.5)
+    scatter2 = ax.scatter(x2, y2, c='blue', alpha=0.7, s=60, label='Кластер 2', edgecolors='black', linewidth=0.5)
+    scatter3 = ax.scatter(x3, y3, c='green', alpha=0.7, s=60, label='Кластер 3', edgecolors='black', linewidth=0.5)
+
+    ax.set_xlabel('X координата', fontsize=12)
+    ax.set_ylabel('Y координата', fontsize=12)
+    ax.set_title('Точечная диаграмма трех кластеров данных', fontsize=14)
+    ax.legend(fontsize=11)
+    ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('task2_scatter_clusters.png', dpi=300, bbox_inches='tight')
+    plt.savefig('task2_scatter_clusters.pdf', bbox_inches='tight')
+    plt.show()
+
+def task3():
+    categories = ['Социальные сети', 'Видео игры', 'Фильмы/Сериалы',
+                  'Музыка', 'Книги']
+    preferences = [35, 25, 20, 15, 5]
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#ff99cc']
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    wedges, texts, autotexts = ax.pie(preferences, labels=categories, colors=colors,
+                                      autopct='%1.1f%%', startangle=90,
+                                      textprops={'fontsize': 11})
+
+    for autotext in autotexts:
+        autotext.set_color('white')
+        autotext.set_fontweight('bold')
+
+    ax.set_title('Предпочтения пользователей по типам контента', fontsize=14)
+
+    plt.tight_layout()
+    plt.savefig('task3_pie_chart.png', dpi=300, bbox_inches='tight')
+    plt.savefig('task3_pie_chart.pdf', bbox_inches='tight')
+    plt.show()
+
+
+def task4():
+    np.random.seed(42)
+    data = np.random.rand(10, 10)
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    im = ax.imshow(data, cmap='viridis', interpolation='nearest')
+
+    cbar = plt.colorbar(im, ax=ax, shrink=0.8)
+    cbar.set_label('Значения', fontsize=12)
+
+    ax.set_xticks(np.arange(10))
+    ax.set_yticks(np.arange(10))
+    ax.set_xticklabels(np.arange(1, 11))
+    ax.set_yticklabels(np.arange(1, 11))
+    ax.set_xlabel('Столбцы', fontsize=12)
+    ax.set_ylabel('Строки', fontsize=12)
+    ax.set_title('Тепловая карта 10x10 случайных чисел', fontsize=14)
+
+    for i in range(10):
+        for j in range(10):
+            text = ax.text(j, i, f'{data[i, j]:.2f}',
+                           ha="center", va="center", color="white", fontsize=8)
+
+    plt.tight_layout()
+    plt.savefig('task4_heatmap.png', dpi=300, bbox_inches='tight')
+    plt.savefig('task4_heatmap.pdf', bbox_inches='tight')
+    plt.show()
+
+
+def task5():
+    categories = ['Категория A', 'Категория B', 'Категория C',
+                  'Категория D', 'Категория E', 'Категория F']
+    values = [23, 45, 56, 78, 34, 67]
+    colors = plt.cm.Set3(np.linspace(0, 1, len(categories)))
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    bars = ax.barh(categories, values, color=colors, alpha=0.8, edgecolor='black')
+
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 1, bar.get_y() + bar.get_height() / 2,
+                f'{width}', ha='left', va='center', fontsize=11)
+
+    ax.set_xlabel('Значения', fontsize=12)
+    ax.set_ylabel('Категории', fontsize=12)
+    ax.set_title('Горизонтальная столбчатая диаграмма', fontsize=14)
+    ax.grid(True, axis='x', alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('task5_horizontal_bar.png', dpi=300, bbox_inches='tight')
+    plt.savefig('task5_horizontal_bar.pdf', bbox_inches='tight')
+    plt.show()
+
+
+def task7():
+    from mpl_toolkits.mplot3d import Axes3D
+
+    x = np.linspace(-5, 5, 100)
+    y = np.linspace(-5, 5, 100)
+    X, Y = np.meshgrid(x, y)
+    Z = np.sin(np.sqrt(X ** 2 + Y ** 2))
+
+    fig = plt.figure(figsize=(12, 10))
+    ax = fig.add_subplot(111, projection='3d')
+
+    surf = ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.9,
+                           linewidth=0, antialiased=True)
+
+    ax.set_xlabel('X', fontsize=12, labelpad=10)
+    ax.set_ylabel('Y', fontsize=12, labelpad=10)
+    ax.set_zlabel('Z', fontsize=12, labelpad=10)
+    ax.set_title('3D поверхность: z = sin(√(x² + y²))', fontsize=14, pad=20)
+
+    fig.colorbar(surf, ax=ax, shrink=0.5, aspect=20, pad=0.1)
+
+    ax.view_init(elev=30, azim=45)
+
+    plt.tight_layout()
+    plt.savefig('task7_3d_surface.png', dpi=300, bbox_inches='tight')
+    plt.savefig('task7_3d_surface.pdf', bbox_inches='tight')
+    plt.show()
+
+
+if __name__ == "__main__":
+    print("Выполнение задания 1...")
+    task1()
+
+    print("Выполнение задания 2...")
+    task2()
+
+    print("Выполнение задания 3...")
+    task3()
+
+    print("Выполнение задания 4...")
+    task4()
+
+    print("Выполнение задания 5...")
+    task5()
+
+    print("Выполнение задания 7...")
+    task7()
+
+    print("Все графики сохранены в форматах PNG и PDF!")
