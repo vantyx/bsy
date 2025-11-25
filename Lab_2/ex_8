@@ -1,0 +1,11 @@
+strings = ["banana", "apple", "avocado", "grape", "ananas"]
+max_string = ""
+max_count = 0
+
+for s in strings:
+    count_a = s.count('a')
+    if count_a > max_count:
+        max_count = count_a
+        max_string = s
+
+print(max_string)
